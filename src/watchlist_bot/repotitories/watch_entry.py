@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from sqlalchemy import delete, insert, select, update
 
 from watchlist_bot.models import User, WatchEntry
@@ -36,5 +38,18 @@ class WatchEntryRepository(BaseRepository):
         self.session.commit()
 
     def generate_watch_list(self) -> list[WatchEntry]:
-        stmt = select(WatchEntry).where(WatchEntry.watched_at == None)
+        stmt = (
+            select(WatchEntry)
+            .where(WatchEntry.watched_at == None)
+            .order_by(WatchEntry.created_at)
+        )
         return list(self.session.execute(stmt).scalars())
+
+    def mark_completed(self, watch_entry_id: int) -> None:
+        stmt = (
+            update(WatchEntry)
+            .where(WatchEntry.id == watch_entry_id)
+            .values(watched_at=datetime.now(tz=UTC))
+        )
+        self.session.execute(stmt)
+        self.session.commit()
