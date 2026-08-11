@@ -1,6 +1,6 @@
 services:
   bot:
-    image: .
+    image: vodogamer/watchlist-bot:latest
     env_file:
       - .env
     depends_on:
@@ -11,7 +11,7 @@ services:
       - ./db.sqlite3:/app/db.sqlite3
 
   migrations:
-    build: .
+    build: vodogamer/watchlist-bot:latest
     env_file:
       - .env
     restart: on-failure:3
