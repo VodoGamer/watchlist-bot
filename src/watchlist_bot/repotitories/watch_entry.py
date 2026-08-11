@@ -40,10 +40,29 @@ class WatchEntryRepository(BaseRepository):
     def generate_watch_list(self) -> list[WatchEntry]:
         stmt = (
             select(WatchEntry)
-            .where(WatchEntry.watched_at == None)
+            .where(WatchEntry.watched_at.is_(None))
             .order_by(WatchEntry.created_at)
         )
         return list(self.session.execute(stmt).scalars())
+
+    def generate_unrated_list(self) -> list[WatchEntry]:
+        stmt = (
+            select(WatchEntry)
+            .where(
+                WatchEntry.watched_at.is_not(None),
+                WatchEntry.rating.is_(None),
+            )
+            .order_by(WatchEntry.watched_at)
+        )
+        return list(self.session.execute(stmt).scalars())
+
+    def get_unrated_by_id(self, watch_entry_id: int) -> WatchEntry | None:
+        stmt = select(WatchEntry).where(
+            WatchEntry.id == watch_entry_id,
+            WatchEntry.watched_at.is_not(None),
+            WatchEntry.rating.is_(None),
+        )
+        return self.session.execute(stmt).scalar_one_or_none()
 
     def mark_completed(self, watch_entry_id: int) -> None:
         stmt = (
@@ -53,3 +72,20 @@ class WatchEntryRepository(BaseRepository):
         )
         self.session.execute(stmt)
         self.session.commit()
+
+    def set_rating(self, watch_entry_id: int, rating: int) -> bool:
+        if rating not in range(1, 11):
+            return False
+
+        stmt = (
+            update(WatchEntry)
+            .where(
+                WatchEntry.id == watch_entry_id,
+                WatchEntry.watched_at.is_not(None),
+                WatchEntry.rating.is_(None),
+            )
+            .values(rating=rating)
+        )
+        result = self.session.execute(stmt)
+        self.session.commit()
+        return result.rowcount == 1
