@@ -1,0 +1,32 @@
+name: Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - uses: yezz123/setup-uv@v4
+
+      - name: Install dependencies
+        run: make prepare
+
+      - name: Check code types
+        run: make typecheck
+
+      - name: Check code linting
+        run: make lint
+
