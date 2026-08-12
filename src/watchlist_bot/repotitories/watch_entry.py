@@ -7,9 +7,7 @@ from watchlist_bot.repotitories.base import BaseRepository
 
 
 class WatchEntryRepository(BaseRepository):
-    def create(
-        self, user: User, content: str, description: str | None = None
-    ) -> WatchEntry:
+    def create(self, user: User, content: str, description: str | None = None) -> WatchEntry:
         stmt = (
             insert(WatchEntry)
             .values(content=content, description=description, author_id=user.id)
@@ -88,4 +86,4 @@ class WatchEntryRepository(BaseRepository):
         )
         result = self.session.execute(stmt)
         self.session.commit()
-        return result.rowcount == 1
+        return bool(result.scalar_one_or_none())

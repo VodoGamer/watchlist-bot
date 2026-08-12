@@ -33,9 +33,7 @@ def text_validator(text: str, max_length: int = MAX_CONTENT_LENGTH) -> str | Non
 
 
 class IsTextLong(ABCRule, requires=[HasText()]):
-    async def check(
-        self, message: Message, max_length: int = MAX_CONTENT_LENGTH
-    ) -> bool:
+    async def check(self, message: Message, max_length: int = MAX_CONTENT_LENGTH) -> bool:
         return bool(text_validator(message.text.unwrap(), max_length))
 
 
@@ -58,9 +56,7 @@ async def handle_quick_save(
 
 
 @dp.message(Command("save"))
-async def handle_save(
-    message: Message, repository: DBRepositoryNode, user: DBUserNode
-) -> None:
+async def handle_save(message: Message, repository: DBRepositoryNode, user: DBUserNode) -> None:
     await message.answer("Введите, то, что хотите сохранить в список для просмотра:")
     msg, _ = await dp.message.wait(
         MESSAGE_FROM_USER(message.from_user.id),

@@ -12,6 +12,5 @@ async def start(message: Message) -> None:
     for bot_command in bot_commands:
         commands_str += f"/{bot_command.command} — {bot_command.description}\n"
     await message.answer(
-        "Бот для совместного ведения списка просмотренного!\n\n"
-        f"Доступные команды:\n{commands_str}"
+        f"Бот для совместного ведения списка просмотренного!\n\nДоступные команды:\n{commands_str}"
     )

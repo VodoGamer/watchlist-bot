@@ -1,4 +1,4 @@
-.PHONY: prepare migration-generate migration-upgrade watchlist-bot
+.PHONY: prepare migration-generate migration-upgrade watchlist-bot lint typecheck format check
 
 PYTHON := .venv/bin/python3
 
@@ -14,3 +14,14 @@ migration-upgrade:
 
 watchlist-bot:
 	uv run watchlist-bot
+
+lint:
+	$(PYTHON) -m ruff check
+
+typecheck:
+	$(PYTHON) -m basedpyright
+
+format:
+	$(PYTHON) -m ruff format
+
+check: lint typecheck format

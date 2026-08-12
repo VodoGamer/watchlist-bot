@@ -33,8 +33,5 @@ ALLOWED_USER_IDS: Final[list[int]] = (
 )
 
 LOGGING_LEVEL: Final[LoggerLevel] = (
-    _get_secret_value("LOGGING_LEVEL")
-    .cast(Ok, Error)
-    .then(_is_logger_level)
-    .unwrap_or("INFO")
+    _get_secret_value("LOGGING_LEVEL").cast(Ok, Error).then(_is_logger_level).unwrap_or("INFO")
 )

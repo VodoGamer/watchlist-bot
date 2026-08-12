@@ -44,7 +44,5 @@ class DBRepositoryNode:
 @scalar_node
 class DBUserNode:
     @classmethod
-    def __compose__(
-        cls, repo: DBRepositoryNode, message: Message, user_id: UserId
-    ) -> User:
+    def __compose__(cls, repo: DBRepositoryNode, message: Message, user_id: UserId) -> User:
         return repo.user.get_or_register(user_id, message.from_user.first_name)

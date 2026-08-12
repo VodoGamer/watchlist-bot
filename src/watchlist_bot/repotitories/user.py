@@ -16,10 +16,7 @@ class UserRepository(BaseRepository):
 
         if user.first_name != first_name:
             update_stmt = (
-                update(User)
-                .where(User.id == id)
-                .values(first_name=first_name)
-                .returning(User)
+                update(User).where(User.id == id).values(first_name=first_name).returning(User)
             )
             user = self.session.execute(update_stmt).scalar_one()
             self.session.commit()
