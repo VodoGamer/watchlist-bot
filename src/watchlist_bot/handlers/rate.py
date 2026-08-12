@@ -44,7 +44,10 @@ async def handle_rate(message: Message, repository: DBRepositoryNode) -> None:
     await message.answer(
         "Выберите, что хотите оценить:",
         reply_markup=get_watch_entries_rate_keyboard(
-            {watch_entry.id: watch_entry.content for watch_entry in watch_entries},
+            {
+                watch_entry.id: watch_entry.description or watch_entry.content
+                for watch_entry in watch_entries
+            },
         ),
     )
 

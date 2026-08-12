@@ -18,8 +18,8 @@ async def handle_watch(message: Message, repository: DBRepositoryNode) -> None:
     for watch_entry in watch_list:
         choice.add_option(
             watch_entry.id,
-            f"{watch_entry.content}",
-            f"✅ {watch_entry.content}",
+            f"{watch_entry.description or watch_entry.content}",
+            f"✅ {watch_entry.description or watch_entry.content}",
         )
     chosen, message_id = await choice.wait(message.api)
     for key, value in chosen.items():
