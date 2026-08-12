@@ -12,7 +12,7 @@ MIN_RATING: Final[int] = 1
 MAX_RATING: Final[int] = 10
 
 
-def get_watch_entries_keyboard(
+def get_watch_entries_rate_keyboard(
     watch_entries: dict[int, str],
 ) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboard()
@@ -43,7 +43,7 @@ async def handle_rate(message: Message, repository: DBRepositoryNode) -> None:
 
     await message.answer(
         "Выберите, что хотите оценить:",
-        reply_markup=get_watch_entries_keyboard(
+        reply_markup=get_watch_entries_rate_keyboard(
             {watch_entry.id: watch_entry.content for watch_entry in watch_entries},
         ),
     )
