@@ -2,7 +2,7 @@ from collections.abc import Callable
 
 from telegrinder import Dispatch, Message
 from telegrinder.rules import Command
-from telegrinder.tools.formatting.html import HTML, italic, link
+from telegrinder.tools.formatting.html import italic
 from telegrinder.types import LinkPreviewOptions
 
 from watchlist_bot.models import WatchEntry
@@ -11,18 +11,12 @@ from watchlist_bot.nodes import DBRepositoryNode
 dp = Dispatch()
 
 
-def _format_base_watch_entry(watch_entry: WatchEntry) -> str:
-    return HTML << link(watch_entry.content, text=watch_entry.description)
-
-
 def _format_watch_entry(watch_entry: WatchEntry) -> str:
-    return _format_base_watch_entry(watch_entry) + italic(f" ({watch_entry.author.first_name})")
+    return watch_entry.as_html() + italic(f" ({watch_entry.author.first_name})")
 
 
 def _format_watched_entry(watch_entry: WatchEntry) -> str:
-    return _format_base_watch_entry(watch_entry) + italic(
-        f" ({watch_entry.watched_at:%Y-%m-%d %H:%M:%S})"
-    )
+    return watch_entry.as_html() + italic(f" ({watch_entry.watched_at:%Y-%m-%d %H:%M:%S})")
 
 
 def _format_watch_entries(

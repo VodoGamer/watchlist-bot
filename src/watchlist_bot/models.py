@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from telegrinder.tools.formatting.html import HTML, link
 
 
 class Base(DeclarativeBase):
@@ -44,3 +45,6 @@ class WatchEntry(Base):
 
     def __repr__(self) -> str:
         return f"WatchEntry(id={self.id}, content={self.content}, author_id={self.author_id})"
+
+    def as_html(self) -> str:
+        return HTML << link(self.content, text=self.description)

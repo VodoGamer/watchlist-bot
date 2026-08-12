@@ -15,7 +15,7 @@ async def handle_undo_watch_entry(
     repository.watch_entry.delete(watch_entry_id)
     message_id_to_edit = callback_query.message.unwrap().only(MessageCute).unwrap().message_id
     await callback_query.api.edit_message_text(
-        text=f'"{watch_entry.content}" удалён из списка просмотра',
+        text=f"{watch_entry.as_html()} удалён из списка просмотра",
         chat_id=callback_query.chat_id.unwrap(),
         message_id=message_id_to_edit,
         link_preview_options=LinkPreviewOptions(is_disabled=True),

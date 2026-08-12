@@ -64,7 +64,7 @@ async def handle_rate_choice(
         return
 
     await callback_query.edit_text(
-        text=f'Оцените "{watch_entry.content}" от {MIN_RATING} до {MAX_RATING}:',
+        text=f"Оцените {watch_entry.as_html()} от {MIN_RATING} до {MAX_RATING}:",
         reply_markup=get_rating_keyboard(watch_entry_id),
     )
     await callback_query.answer()
@@ -88,6 +88,6 @@ async def handle_rating(
 
     watch_entry = repository.watch_entry.get_by_id(watch_entry_id)
     await callback_query.edit_text(
-        text=f'"{watch_entry.content}" оценено на {rating}/{MAX_RATING}.',
+        text=f"{watch_entry.as_html()} оценено на {rating}/{MAX_RATING}.",
     )
     await callback_query.answer()

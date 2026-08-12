@@ -55,8 +55,9 @@ async def handle_save(
         )
         watch_entry = repository.watch_entry.create(user, msg.text.unwrap())
 
+    logger.info(f"For example: {watch_entry}")
     await message.answer(
-        f'"{watch_entry.content}" сохранено в список для просмотра!',
+        f"{watch_entry.as_html()} сохранено в список для просмотра!",
         reply_markup=get_actions_keyboard(watch_entry.id),
         link_preview_options=LinkPreviewOptions(is_disabled=True),
     )
@@ -65,6 +66,6 @@ async def handle_save(
         logger.info(f"Send notification about new watch_entry to user_id: {squad_user_id}")
         await message.api.send_message(
             chat_id=squad_user_id,
-            text=f'Участник {user.first_name} добавил "{watch_entry.content}" в список просмотра',
+            text=f"Участник {user.first_name} добавил {watch_entry.as_html()} в список просмотра",
             link_preview_options=LinkPreviewOptions(is_disabled=True),
         )
