@@ -35,12 +35,14 @@ class WatchEntryRepository(BaseRepository):
         self.session.execute(stmt)
         self.session.commit()
 
-    def generate_watch_list(self) -> list[WatchEntry]:
-        stmt = (
-            select(WatchEntry)
-            .where(WatchEntry.watched_at.is_(None))
-            .order_by(WatchEntry.created_at)
-        )
+    def generate_watch_list(self, is_watched: bool = False) -> list[WatchEntry]:
+        stmt = select(WatchEntry)
+
+        if is_watched:
+            stmt = stmt.where(WatchEntry.watched_at.is_not(None)).order_by(WatchEntry.watched_at)
+        else:
+            stmt = stmt.where(WatchEntry.watched_at.is_(None)).order_by(WatchEntry.created_at)
+
         return list(self.session.execute(stmt).scalars())
 
     def generate_unrated_list(self) -> list[WatchEntry]:
