@@ -10,7 +10,7 @@ from telegrinder import (
 )
 from telegrinder.modules import logger
 from telegrinder.rules import ABCRule, Argument, Command, HasText
-from telegrinder.types import InlineKeyboardMarkup
+from telegrinder.types import InlineKeyboardMarkup, LinkPreviewOptions
 
 from watchlist_bot.config import ALLOWED_USER_IDS
 from watchlist_bot.nodes import DBRepositoryNode, DBUserNode
@@ -45,6 +45,7 @@ async def handle_quick_save(
     await message.answer(
         f'"{content}" сохранено в список для просмотра!',
         reply_markup=get_actions_keyboard(watch_entry.id),
+        link_preview_options=LinkPreviewOptions(is_disabled=True),
     )
     squad_user_ids = set(ALLOWED_USER_IDS) - {user.id}
     for squad_user_id in squad_user_ids:
@@ -52,6 +53,7 @@ async def handle_quick_save(
         await message.api.send_message(
             chat_id=squad_user_id,
             text=f'Участник {user.first_name} добавил "{watch_entry.content}" в список просмотра',
+            link_preview_options=LinkPreviewOptions(is_disabled=True),
         )
 
 
@@ -70,4 +72,5 @@ async def handle_save(message: Message, repository: DBRepositoryNode, user: DBUs
     await message.answer(
         f'"{msg.text.unwrap()}" сохранено в список для просмотра!',
         reply_markup=get_actions_keyboard(watch_entry.id),
+        link_preview_options=LinkPreviewOptions(is_disabled=True),
     )

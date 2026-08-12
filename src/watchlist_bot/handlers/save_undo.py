@@ -3,6 +3,7 @@ from telegrinder import (
     Dispatch,
 )
 from telegrinder.rules import PayloadMarkupRule
+from telegrinder.types import LinkPreviewOptions
 
 from watchlist_bot.nodes import DBRepositoryNode
 
@@ -18,4 +19,5 @@ async def handle_undo_watch_entry(
     await callback_query.api.send_message(
         text=f'"{watch_entry.content}" удалён из списка просмотра',
         chat_id=callback_query.chat_id.unwrap(),
+        link_preview_options=LinkPreviewOptions(is_disabled=True),
     )

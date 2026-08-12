@@ -1,8 +1,6 @@
-from telegrinder import (
-    Dispatch,
-    Message,
-)
+from telegrinder import Dispatch, Message
 from telegrinder.rules import Command
+from telegrinder.types import LinkPreviewOptions
 
 from watchlist_bot.models import WatchEntry
 from watchlist_bot.nodes import DBRepositoryNode
@@ -23,7 +21,10 @@ async def handle_list(message: Message, repository: DBRepositoryNode) -> None:
         await message.answer("Список просмотра пуст, добавьте новый контент командой /save")
         return
     watch_list_str = _format_watch_entries(watch_list)
-    await message.answer(watch_list_str)
+    await message.answer(
+        watch_list_str,
+        link_preview_options=LinkPreviewOptions(is_disabled=True),
+    )
 
 
 @dp.message(Command("viewed"))
@@ -35,4 +36,7 @@ async def handle_viewed(message: Message, repository: DBRepositoryNode) -> None:
         )
         return
     watched_list_str = _format_watch_entries(watched_list)
-    await message.answer(watched_list_str)
+    await message.answer(
+        watched_list_str,
+        link_preview_options=LinkPreviewOptions(is_disabled=True),
+    )
