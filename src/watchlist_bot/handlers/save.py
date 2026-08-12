@@ -37,40 +37,34 @@ class IsTextLong(ABCRule, requires=[HasText()]):
         return bool(text_validator(message.text.unwrap(), max_length))
 
 
-@dp.message(Command("save", Argument("content", [text_validator])))
-async def handle_quick_save(
-    message: Message, content: str, repository: DBRepositoryNode, user: DBUserNode
+@dp.message(Command("save", Argument("content", [text_validator], optional=True)))
+async def handle_save(
+    message: Message, repository: DBRepositoryNode, user: DBUserNode, content: str | None = None
 ) -> None:
-    watch_entry = repository.watch_entry.create(user, content)
+    if content:
+        watch_entry = repository.watch_entry.create(user, content)
+    else:
+        await message.answer("Введите, то, что хотите сохранить в список для просмотра:")
+        msg, _ = await dp.message.wait(
+            MESSAGE_FROM_USER(message.from_user.id),
+            release=HasText() & IsTextLong(),
+            on_miss=MessageReplyHandler(
+                f"Длина содержимого не должна привышать {MAX_CONTENT_LENGTH} символов",
+                as_reply=True,
+            ),
+        )
+        watch_entry = repository.watch_entry.create(user, msg.text.unwrap())
+
     await message.answer(
-        f'"{content}" сохранено в список для просмотра!',
+        f'"{watch_entry.content}" сохранено в список для просмотра!',
         reply_markup=get_actions_keyboard(watch_entry.id),
         link_preview_options=LinkPreviewOptions(is_disabled=True),
     )
     squad_user_ids = set(ALLOWED_USER_IDS) - {user.id}
     for squad_user_id in squad_user_ids:
-        logger.info(f"Send distribution message to user_id: {squad_user_id}")
+        logger.info(f"Send notification about new watch_entry to user_id: {squad_user_id}")
         await message.api.send_message(
             chat_id=squad_user_id,
             text=f'Участник {user.first_name} добавил "{watch_entry.content}" в список просмотра',
             link_preview_options=LinkPreviewOptions(is_disabled=True),
         )
-
-
-@dp.message(Command("save"))
-async def handle_save(message: Message, repository: DBRepositoryNode, user: DBUserNode) -> None:
-    await message.answer("Введите, то, что хотите сохранить в список для просмотра:")
-    msg, _ = await dp.message.wait(
-        MESSAGE_FROM_USER(message.from_user.id),
-        release=HasText() & IsTextLong(),
-        on_miss=MessageReplyHandler(
-            f"Длина содержимого не должна привышать {MAX_CONTENT_LENGTH} символов",
-            as_reply=True,
-        ),
-    )
-    watch_entry = repository.watch_entry.create(user, msg.text.unwrap())
-    await message.answer(
-        f'"{msg.text.unwrap()}" сохранено в список для просмотра!',
-        reply_markup=get_actions_keyboard(watch_entry.id),
-        link_preview_options=LinkPreviewOptions(is_disabled=True),
-    )
