@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 
 from sqlalchemy import delete, insert, select, update
+from sqlalchemy.orm import joinedload
 
 from watchlist_bot.models import User, WatchEntry
 from watchlist_bot.repotitories.base import BaseRepository
@@ -35,13 +36,18 @@ class WatchEntryRepository(BaseRepository):
         self.session.execute(stmt)
         self.session.commit()
 
-    def generate_watch_list(self, is_watched: bool = False) -> list[WatchEntry]:
+    def generate_watch_list(
+        self, *, is_watched: bool = False, join_author: bool = False
+    ) -> list[WatchEntry]:
         stmt = select(WatchEntry)
 
         if is_watched:
             stmt = stmt.where(WatchEntry.watched_at.is_not(None)).order_by(WatchEntry.watched_at)
         else:
             stmt = stmt.where(WatchEntry.watched_at.is_(None)).order_by(WatchEntry.created_at)
+
+        if join_author:
+            stmt = stmt.options(joinedload(WatchEntry.author))
 
         return list(self.session.execute(stmt).scalars())
 
