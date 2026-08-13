@@ -10,6 +10,7 @@ bot_commands: list[BotCommand] = [
     BotCommand("edit", "Обновить описание контента"),
     BotCommand("rate", "Оценить отсмотренное"),
     BotCommand("viewed", "Что уже посмотрели?"),
+    BotCommand("version", "Версия бота"),
 ]
 
 
