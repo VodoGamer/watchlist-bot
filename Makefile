@@ -24,4 +24,4 @@ typecheck:
 format:
 	$(PYTHON) -m ruff format
 
-check: lint typecheck format
+check: prepare lint typecheck format
