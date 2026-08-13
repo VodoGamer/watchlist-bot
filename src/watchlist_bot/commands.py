@@ -7,6 +7,7 @@ bot_commands: list[BotCommand] = [
     BotCommand("save", "Сохранить для просмотра"),
     BotCommand("list", "Что посмотреть?"),
     BotCommand("watch", "Отметить прогресс"),
+    BotCommand("edit", "Обновить описание контента"),
     BotCommand("rate", "Оценить отсмотренное"),
     BotCommand("viewed", "Что уже посмотрели?"),
 ]
